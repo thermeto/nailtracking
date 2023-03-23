@@ -20,4 +20,4 @@ VOLUME /nailtracking_images/output_images
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Run the brocker.py script
-CMD ["python", "consumer.py"]
+CMD ["python", "/nailtracking/consumer.py"]
