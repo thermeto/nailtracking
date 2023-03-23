@@ -4,7 +4,6 @@
 # from object_detection.utils import label_map_util
 # import tensorflow as tf
 import numpy as np
-from imutils.video import WebcamVideoStream
 from . import find_finger as ff
 import tensorflow.compat.v1 as tf
 
