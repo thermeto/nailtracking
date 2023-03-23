@@ -1,0 +1,4 @@
+# pip download -r requirements.txt --dest packages_snapshot
+opencv-python
+opencv-python-headless
+dm-tree
