@@ -27,7 +27,7 @@ def on_message(channel, method_frame, header_frame, body):
 
 
 # Connect to RabbitMQ
-connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq'))
 channel = connection.channel()
 
 # Declare the input queue (nailtracking_queue)

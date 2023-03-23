@@ -1,5 +1,7 @@
 FROM thermeto/garnify:tf0.0.1
 
+RUN apt-get update && apt-get install -y libgl1
+
 # Set the working directory
 WORKDIR /nailtracking
 
