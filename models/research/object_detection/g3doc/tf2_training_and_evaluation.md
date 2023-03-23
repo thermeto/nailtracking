@@ -194,7 +194,7 @@ https://cloud.google.com/ai-platform/training/docs/custom-containers-training.
 git clone https://github.com/tensorflow/models.git
 
 # From the tensorflow/models/research/ directory
-cp object_detection/dockerfiles/tf2_ai_platform/Dockerfile .
+cp object_detection/dockerfiles/tf2_ai_platform/Dockerfile_base .
 
 docker build -t gcr.io/${DOCKER_IMAGE_URI} .
 

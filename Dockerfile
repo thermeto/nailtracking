@@ -1,43 +1,23 @@
-# Use the official TensorFlow GPU image as the base image
-FROM tensorflow/tensorflow:2.7.0-gpu
+FROM thermeto/garnify:tf0.0.1
 
 # Set the working directory
-WORKDIR /tensorflow
+WORKDIR /nailtracking
 
-RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/3bf863cc.pub
+# Copy the nailtracking project into the container
+COPY . .
 
-# Install necessary system packages
-RUN apt-get update && \
-    apt-get install -y \
-    git \
-    protobuf-compiler \
-    python3-tk
+# Install RabbitMQ
+RUN apt-get update && apt-get install -y rabbitmq-server
 
-# Install Python packages
-RUN pip install --no-cache-dir \
-    cython \
-    contextlib2 \
-    lxml \
-    jupyter \
-    matplotlib \
-    pillow \
-    pycocotools \
-    opencv-python-headless
+# Create input and output image folders
+RUN mkdir -p /nailtracking_images/input_images && mkdir -p /nailtracking_images/output_images
 
-# Clone the TensorFlow models repository
-RUN git clone https://github.com/tensorflow/models.git
+# Expose the input and output image folder as a volume
+VOLUME /nailtracking_images/input_images
+VOLUME /nailtracking_images/output_images
 
-# Compile protobuf files and install the object_detection package
-RUN cd models/research && \
-    protoc object_detection/protos/*.proto --python_out=. && \
-    cp object_detection/packages/tf2/setup.py . && \
-    python -m pip install .
+# Install any additional packages required for the project
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Set the PYTHONPATH environment variable for the object_detection directory
-ENV PYTHONPATH=$PYTHONPATH:/tensorflow/models/research:/tensorflow/models/research/slim
-
-# Expose Jupyter Notebook port
-EXPOSE 8888
-
-# Start Jupyter Notebook
-CMD ["jupyter", "notebook", "--allow-root", "--ip=0.0.0.0", "--no-browser", "--NotebookApp.token=''"]
+# Run the brocker.py script
+CMD ["python", "consumer.py"]

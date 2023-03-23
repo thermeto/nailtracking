@@ -23,7 +23,7 @@ git clone https://github.com/tensorflow/models.git
 
 ```bash
 # From the root of the git repository
-docker build -f research/object_detection/dockerfiles/tf2/Dockerfile -t od .
+docker build -f research/object_detection/dockerfiles/tf2/Dockerfile_base -t od .
 docker run -it od
 ```
 

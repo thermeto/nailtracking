@@ -76,4 +76,9 @@ def transparentize_nails(image):
             rgba[:, :, 3] = mask
             rgba = cv2.flip(rgba, 1)
             rgba = rgba[0:min(H, W), 0:min(H, W)]
-            return rgba
+
+            # Save the output image to a file
+            output_filename = os.path.join(os.path.dirname(image_path), f"{uuid.uuid4()}.png")
+            cv2.imwrite(output_filename, rgba)
+
+            return output_filename
