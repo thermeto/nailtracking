@@ -1,13 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-# @Author  : ManWingloeng
-
-
 import cv2
-import matplotlib.pyplot as plt
-# from imutils.video.webcamvideostream import WebcamVideoStream
 import numpy as np
-import imutils
 
 def test_HSV(frame):
     HSV_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
