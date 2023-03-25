@@ -1,3 +1,4 @@
+import base64
 import time
 import pika
 import infer_photo
@@ -14,13 +15,15 @@ def on_message(channel, method_frame, header_frame, body):
     # Process the image and get the output path
     output_image_path = infer_photo.transparentize_nails(input_image_path)
 
-    # Update the output path according to Dockerfile's file locations
-    output_image_path_docker = os.path.join('/output_images', os.path.basename(output_image_path))
+    # Prepare the modified image as a base64-encoded string
+    with open(output_image_path, 'rb') as f:
+        modified_image = base64.b64encode(f.read()).decode('utf-8')
 
-    # Publish the output image path to the nailtracking_output_queue
+    # Send the modified image back to the result queue specified in the reply_to property
     channel.basic_publish(exchange='',
-                          routing_key='nailtracking_output_queue',
-                          body=output_image_path_docker)
+                          routing_key=header_frame.reply_to,
+                          properties=pika.BasicProperties(correlation_id=header_frame.correlation_id),
+                          body=modified_image)
 
     # Acknowledge the message so it is removed from the nailtracking_queue
     channel.basic_ack(delivery_tag=method_frame.delivery_tag)
@@ -54,4 +57,3 @@ def start_consuming():
 
 # Start the consuming process
 start_consuming()
-
