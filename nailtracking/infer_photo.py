@@ -1,22 +1,25 @@
 # -*- coding: utf-8 -*-
+import logging
+import os
 
 # import the necessary packages
 # from object_detection.utils import label_map_util
 # import tensorflow as tf
 import numpy as np
+import cv2
 import find_finger as ff
 import tensorflow.compat.v1 as tf
 
 tf.disable_v2_behavior()
 
 args = {
-    "model": "garnify_nails/nailtracking/model/export_model_008/frozen_inference_graph.pb",
+    "model": "nailtracking/model/export_model_008/frozen_inference_graph.pb",
     # "model":"/media/todd/38714CA0C89E958E/147/yl_tmp/readingbook/model/export_model_015/frozen_inference_graph.pb",
-    "labels": "garnify_nails/nailtracking/record/classes.pbtxt",
+    "labels": "nailtracking/record/classes.pbtxt",
     # "labels":"record/classes.pbtxt" ,
     "num_classes": 1,
     "min_confidence": 0.6,
-    "class_model": "garnify_nails/nailtracking/model/class_model/p_class_model_1552620432_.h5"}
+    "class_model": "nailtracking/model/class_model/p_class_model_1552620432_.h5"}
 
 COLORS = np.random.uniform(0, 255, size=(args["num_classes"], 3))
 
@@ -25,14 +28,14 @@ def transparentize_nails(image):
     model = tf.Graph()
 
     with model.as_default():
-        print("> ====== loading NAIL frozen graph into memory")
+        logging.info("> ====== loading NAIL frozen graph into memory")
         graphDef = tf.GraphDef()
 
         with tf.gfile.GFile(args["model"], "rb") as f:
             serializedGraph = f.read()
             graphDef.ParseFromString(serializedGraph)
             tf.import_graph_def(graphDef, name="")
-        print(">  ====== NAIL Inference graph loaded.")
+        logging.info(">  ====== NAIL Inference graph loaded.")
 
     with model.as_default():
         with tf.Session(graph=model) as sess:
@@ -74,10 +77,5 @@ def transparentize_nails(image):
 
             rgba[:, :, 3] = mask
             rgba = cv2.flip(rgba, 1)
-            rgba = rgba[0:min(H, W), 0:min(H, W)]
+            return rgba[0:min(H, W), 0:min(H, W)]
 
-            # Save the output image to a file
-            output_filename = os.path.join(os.path.dirname(image_path), f"{uuid.uuid4()}.png")
-            cv2.imwrite(output_filename, rgba)
-
-            return output_filename
